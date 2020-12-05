@@ -16,7 +16,8 @@ end_datetime = '2019-12-31 22:00'
 def purchase_data(request):
     # FUNCTIONAL BASED VIEW
     global start_datetime, end_datetime
-
+    start_datetime = '2019-01-01 17:00'
+    end_datetime = '2019-12-31 22:00'
     if request.method == 'GET':
         context = {
             "method": "GET",
