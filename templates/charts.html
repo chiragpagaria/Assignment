@@ -1,0 +1,87 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<div class='row'>
+
+    <div class='col-sm-12'>
+        <h3>Graph for start datetime {{ start }} to end datetime {{ end }}</h3>
+        <div class='col-sm-6'>
+            <canvas id="myChart2" width="400" height="400"></canvas>
+        </div>
+        {% if method == "GET"  %}
+                <script>myFunction("GET");</script>
+        {% else %}
+            <script>myFunction("POST")</script>
+        {% endif %}
+        <form method="post">
+            {% csrf_token %}
+              <label>start datetime:</label>
+              <input type="datetime-local" id="start" name="start"><br><br>
+              <label>end datetime:</label>
+              <input type="datetime-local" id="end" name="end">
+              <input type="submit" value="Submit">
+
+        </form>
+
+    </div>
+</div>
+
+{% endblock content %}
+
+<script>
+{% block jquery %}
+function myFunction(x){
+var endpoint = '/api/chart/data/'
+
+var defaultData = []
+var labels = [];
+$.ajax({
+    method: x,
+    url: endpoint,
+    success: function(data){
+        labels = data.labels
+        defaultData = data.default
+        label_value = data.axis
+        setChart()
+    },
+    error: function(error_data){
+        console.log("error")
+        console.log(error_data)
+    }
+})
+
+function setChart(){
+    var ctx2 = document.getElementById("myChart2");
+    var myChart = new Chart(ctx2, {
+    type: 'bar',
+    data: {
+        labels: labels,
+        datasets: [{
+            label: label_value,
+            data: defaultData,
+            backgroundColor: [
+                'rgba(255, 99, 132, 0.2)',
+            ],
+            borderColor: [
+
+                'rgba(255, 159, 64, 1)'
+            ],
+            borderWidth: 1
+        }]
+    },
+    options: {
+        scales: {
+            yAxes: [{
+                ticks: {
+                    beginAtZero:true
+                }
+            }]
+        }
+    }
+});
+
+}}
+
+{% endblock %}
+</script>
